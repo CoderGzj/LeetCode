@@ -3,7 +3,7 @@ LeetCode算法
 # 一、数组
 **数组是存放在连续内存空间上的相同类型数据的集合。**
 ---
-## 704.二分查找
+## 704.二分查找 简单
 [力扣题目链接](https://leetcode.cn/problems/binary-search/)
 给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回-1。
 
@@ -63,7 +63,7 @@ public:
     }
 };
 ```
-## 27.移除元素
+## 27.移除元素 简单
 [力扣题目链接](https://leetcode.cn/problems/binary-search/)
 给你一个数组 nums 和一个值 val，你需要原地移除所有数值等于 val 的元素，并返回移除后数组的新长度。
 不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并原地修改输入数组。
@@ -136,7 +136,7 @@ public:
     }
 };
 ```
-## 977.有序数组的平方
+## 977.有序数组的平方 简单
 [力扣题目链接](https://leetcode.cn/problems/squares-of-a-sorted-array/)
 给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。
 
@@ -176,6 +176,67 @@ public:
                 result[i--] = nums[right] * nums[right];
                 right--;
             }
+        }
+        return result;
+    }
+};
+```
+## 209.长度最小的子数组 中等
+[力扣题目链接](https://leetcode.cn/problems/minimum-size-subarray-sum/)
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+示例 ：
+输入：target = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+### 滑动窗口
+时间复杂度：O(n)
+空间复杂度：O(1)
+所谓滑动窗口，就是不断的调节子序列的起始位置和终止位置，从而得出我们要想的结果。
+分为以下几个步骤：
+右滑j，使窗口内和sum>=target
+左滑i，保证sum>=target
+重复步骤1
+```c++
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+        int sum = 0 ,j = 0, len = 0, i = 0;
+        int result = INT32_MAX;
+        for (; j < nums.size(); j++) {
+            sum += nums[j];
+            while (sum >= target) {
+                len = j - i + 1;
+                result = min(len, result);
+                sum -= nums[i++];
+            }
+        }
+        return result == INT32_MAX ? 0 : result; 
+    }
+};
+```
+## 59.螺旋矩阵II 中等
+[力扣题目链接](https://leetcode.cn/problems/spiral-matrix-ii/)
+给你一个正整数 n ，生成一个包含 1 到 n^2 所有元素，且元素按顺时针顺序螺旋排列的 n x n 正方形矩阵 matrix 。
+```c++
+class Solution {
+public:
+    vector<vector<int>> generateMatrix(int n) {
+        vector<vector<int>> result(n, vector<int>(n, n * n));
+        int x = 0, y = 0, i, j;
+        int loop = n / 2;
+        int count = 1, offset = 1;
+        while (loop--) {
+            for (j = y; j < n - offset; j++)
+                result[x][j] = count++;
+            for (i = x; i < n - offset; i++)
+                result[i][j] = count++;
+            for (; j > x; j--)
+                result[i][j] = count++;
+            for (; i > y; i--)
+                result[i][j] = count++;
+            x++; y++; offset++;
         }
         return result;
     }
