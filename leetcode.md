@@ -144,6 +144,7 @@ public:
 输入：nums = [-4,-1,0,3,10]
 输出：[0,1,9,16,100]
 ### 暴力
+数组原地平方后用STL库函数sort排序。
 时间复杂度是 O(n + nlogn)
 ```c++
 class Solution {
@@ -158,6 +159,7 @@ public:
 };
 ```
 ### 双指针
+因为数组已经非递减有序，平方后大的数一定在两边，小数在中间，所以双指针分别指向两端，向中间迭代。
 时间复杂度为O(n)
 ```c++
 class Solution {
@@ -165,8 +167,8 @@ public:
     vector<int> sortedSquares(vector<int>& nums) {
         int left = 0;
         int right = nums.size() - 1;
-        int i = right;
-        vector<int> result(nums.size(), 0);
+        int i = right; //新数组由小到大，所以从后--。
+        vector<int> result(nums.size(), 0); //vector一个新数组用来接收
         while (left <= right) {
             if (nums[left] * nums[left] > nums[right] * nums[right]) {
                 result[i--] = nums[left] * nums[left];
@@ -372,4 +374,61 @@ private:
  * obj->deleteAtIndex(index);
  */
  ```
- 
+ ## 206.反转链表 简单
+[力扣题目链接](https://leetcode.cn/problems/reverse-linked-list/)
+题意：给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
+示例: 输入: 1->2->3->4->5->NULL 输出: 5->4->3->2->1->NULL
+### 迭代
+时间复杂度: O(n)
+空间复杂度: O(1)
+```c++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* pre = NULL;
+        ListNode* cur = head;
+        ListNode* temp = NULL;
+        while (cur) {
+            temp = cur->next; // 保存一下 cur的下一个节点，因为接下来要改变cur->next
+            cur->next = pre; // 翻转操作
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+    }
+};
+```
+### 递归1
+时间复杂度: O(n), 要递归处理链表的每个节点
+空间复杂度: O(n), 递归调用了 n 层栈空间
+```c++
+class Solution {
+public:
+    ListNode* reverse (ListNode* pre, ListNode* cur) {
+        if (cur == NULL) return pre;
+        ListNode* temp =cur->next;
+        cur->next = pre;
+        return reverse(cur, temp);
+    }
+    ListNode* reverseList(ListNode* head) {
+        return reverse(NULL, head);
+    }
+};
+```
+### 递归2
+时间复杂度: O(n)
+空间复杂度: O(n)
+```c++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(!head || !head->next) return head; // 边缘条件判断
+        // 递归调用，翻转第二个节点开始往后的链表
+        ListNode *last = reverseList(head->next);
+        // 翻转头节点与第二个节点的指向
+        head->next->next = head;
+        // 此时的 head 节点为尾节点，next 需要指向 NULL
+        head->next = NULL;
+        return last;
+    }
+};```
