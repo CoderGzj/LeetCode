@@ -2,7 +2,7 @@ LeetCode算法
 
 # 一、数组
 **数组是存放在连续内存空间上的相同类型数据的集合。**
----
+
 ## 704.二分查找 简单
 [力扣题目链接](https://leetcode.cn/problems/binary-search/)
 给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回-1。
@@ -355,8 +355,8 @@ private:
     Node* dummyNode;
 };
 
- ```
- ## 206.反转链表 简单
+```
+## 206.反转链表 简单
 [力扣题目链接](https://leetcode.cn/problems/reverse-linked-list/)
 题意：给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
 示例: 输入: 1->2->3->4->5->NULL 输出: 5->4->3->2->1->NULL
@@ -415,7 +415,6 @@ public:
     }
 };
 ```
-
 ## **24.两两交换链表中的节点 中等**
 [力扣题目链接](https://leetcode.cn/problems/swap-nodes-in-pairs/)
 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
@@ -588,7 +587,7 @@ public:
             visited.insert(head);
             head = head->next;
         }
-        return nullptr;
+        return NULL;
     }
 };
 ```
