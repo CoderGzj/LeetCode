@@ -260,16 +260,6 @@ public:
 时间复杂度: O(n)
 空间复杂度: O(1)
 ```c++
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
     ListNode* removeElements(ListNode* head, int val) {
@@ -364,15 +354,7 @@ private:
     int _size;
     Node* dummyNode;
 };
-/**
- * Your MyLinkedList object will be instantiated and called as such:
- * MyLinkedList* obj = new MyLinkedList();
- * int param_1 = obj->get(index);
- * obj->addAtHead(val);
- * obj->addAtTail(val);
- * obj->addAtIndex(index,val);
- * obj->deleteAtIndex(index);
- */
+
  ```
  ## 206.反转链表 简单
 [力扣题目链接](https://leetcode.cn/problems/reverse-linked-list/)
@@ -429,6 +411,184 @@ public:
         head->next->next = head;
         // 此时的 head 节点为尾节点，next 需要指向 NULL
         head->next = NULL;
-        return last;
+        return last; //返回头节点位置
     }
-};```
+};
+```
+
+## **24.两两交换链表中的节点 中等**
+[力扣题目链接](https://leetcode.cn/problems/swap-nodes-in-pairs/)
+给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+设置一个虚拟头结点指向原头结点，方便统一后续操作。cur指针先指向虚拟头结点，后续迭代每次指向要交换的两个节点的前一个节点，以此来操作交换过程，在交换中按特定顺序就只需建立一个临时指针保存后续节点。 最后返回虚拟头结点的next就是真正的头结点。
+时间复杂度：O(n)
+空间复杂度：O(1)
+```c++
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) { 
+        ListNode* dummyHead = new ListNode(0, head);// 设置一个虚拟头结点指向head
+        ListNode* cur = dummyHead;
+        while (cur->next && cur->next->next) {
+            ListNode* temp = cur->next->next; // 记录临时节点
+            cur->next->next = temp->next;
+            temp->next = cur->next;
+            cur->next = temp;
+            cur = cur->next->next; // cur移动两位，准备下一轮交换
+        }
+        return dummyHead->next;
+    }
+};
+```
+## **19.删除链表的倒数第N个节点 中等**
+[力扣题目链接](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+进阶：你能尝试使用一趟扫描实现吗？
+### 双指针
+思路：双指针的经典应用，如果要删除倒数第n个节点，让fast移动n步，然后让fast和slow同时移动，
+直到fast指向链表末尾。删掉slow所指向的节点就可以了。
+时间复杂度: O(n)
+空间复杂度: O(1)
+```c++
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummyHead = new ListNode(0, head);
+        ListNode* fast = head; //fast从head(即dummy->next)开始，slow从dummy开始
+        ListNode* slow = dummyHead; //保证了最后slow位于删除元素的前驱节点，方便删除操作
+        while (n--) fast = fast->next;
+        while (fast) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+        ListNode* temp = slow->next;
+        slow->next = slow->next->next;
+        delete temp;
+        return dummyHead->next;
+    }
+};
+```
+### 栈
+在遍历链表的同时将所有节点依次入栈。根据栈「先进后出」的原则，我们弹出栈的第n个节点就是需要删除的节点，并且目前栈顶的节点就是待删除节点的前驱节点。这样一来，删除操作就变得十分方便了。
+时间复杂度: O(n)
+空间复杂度: O(n)
+```c++
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        stack<ListNode*> stk; //开辟一个栈
+        ListNode* dummyHead = new ListNode(0, head); //哑结点，虚拟头结点，方便统一操作
+        ListNode* cur = dummyHead;
+        while (cur) { //遍历链表并依次入栈
+            stk.push(cur);
+            cur = cur->next;
+        } 
+        while (n--) stk.pop(); //弹栈n次
+        cur = stk.top(); //栈顶元素为倒数第n个要删除元素的前驱结点。
+        cur->next = cur->next->next;
+        return dummyHead->next;
+    }
+};
+```
+## 面试题 02.07.链表相交
+同：160.链表相交
+[力扣题目链接](https://leetcode.cn/problems/intersection-of-two-linked-lists-lcci/)
+给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
+
+### 一、双指针
+设第一个公共节点为node,headA 的节点数量为a,headB 的节点数量为b,两链表的公共尾部的节点数量为c
+则有：
+* 头节点 headA 到 node 前，共有 a−c 个节点；
+* 头节点 headB 到 node 前，共有 b−c 个节点；
+设两个指针，A 指向 headA, B 指向 headB。遍历各自链表后对另一个链表开始遍历。
+* 若有公共节点，则同时指向公共节点，因为 a + (b - c) = b + (a - c)。
+* 若无公共节点，则遍历完两个链表后同时指向NULL，因为 a + b = b + a。
+```c++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* A = headA, * B = headB;
+        while (A != B) {
+            A = A == NULL ? headB : A->next;
+            B = B == NULL ? headA : B->next; 
+        }
+        return A;
+    }
+};
+```
+### 二、哈希集合
+判断两个链表是否相交，可以使用哈希集合存储链表节点。
+首先遍历链表 headA，并将每个节点加入哈希集合中。然后遍历链表 headB，对于遍历到的每个节点，判断该节点是否在哈希集合中：
+* 如果不在哈希集合中，则继续遍历下一个节点；
+* 如果在哈希集合中，则后面的节点都在哈希集合中，即从当前节点开始的所有节点都在两个链表的相交部分，因此在链表 headB 中遍历到的第一个在哈希集合中的节点就是两个链表相交的节点，返回该节点。
+* 如果链表 headB 中的所有节点都不在哈希集合中，则两个链表不相交，返回 null。
+```c++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        unordered_set<ListNode *> visited;
+        ListNode *cur = headA;
+        while (cur) {
+            visited.insert(cur);
+            cur = cur->next;
+        }
+        cur = headB;
+        while (cur) {
+            if (visited.count(cur)) return cur;
+            cur = cur->next;
+        }
+        return NULL;
+    }
+};
+```
+# 142.环形链表II 中等
+[力扣题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/)
+题意：给定一个链表，返回链表开始入环的第一个节点。如果链表无环，则返回 null。
+说明：不允许修改给定的链表。
+
+### 双指针（快慢指针）
+使用两个指针，fast 与 slow 都位于链表的头部。随后，slow每次向后移动一个位置，而fast向后移动两个位置。如果链表中存在环，则 fast 最终将与 slow 在环中相遇。
+当 slow 与 fast相遇时，再使指针指向链表头部；随后和slow每次移动一个位置。最终它们会在入环点相遇。
+时间复杂度：O(n)
+空间复杂度：O(1)
+```c++
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *fast = head, *slow = head;
+        while (fast && fast->next) { //fast == NULL，fast->next == NULL 无环
+            fast = fast->next->next; //fast每次走两个节点
+            slow = slow->next; //slow每次走一个节点
+            if (fast == slow) { //首次相遇，说明有环
+                fast = head; //fast从头开始，和slow同步每次走一个节点
+                while (fast != slow) { //再次相遇时就是入环的位置
+                    fast = fast->next;
+                    slow = slow->next;
+                }
+                return fast;
+            }
+        }
+        return NULL;
+    }
+};
+```
+### 哈希集表
+遍历链表中的每个节点，并将它记录下来；一旦遇到了此前遍历过的节点，就可以判定链表中存在环。
+借助哈希表可以很方便地实现。
+时间复杂度：O(n)
+空间复杂度：O(n)
+```c++
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        unordered_set<ListNode *> visited;
+        while (head) {
+            if (visited.count(head)) return head;
+            visited.insert(head);
+            head = head->next;
+        }
+        return nullptr;
+    }
+};
+```
