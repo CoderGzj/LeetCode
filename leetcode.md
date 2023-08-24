@@ -591,3 +591,38 @@ public:
     }
 };
 ```
+# 三、哈希表
+**当我们遇到了要快速判断一个元素是否出现集合里的时候，就要考虑哈希法。**
+## 242.有效的字母异位词
+[力扣题目链接](https://leetcode.cn/problems/valid-anagram/)
+给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
+示例 1: 输入: s = "anagram", t = "nagaram" 输出: true
+示例 2: 输入: s = "rat", t = "car" 输出: false
+说明: 你可以假设字符串只包含小写字母。
+
+### 哈希表
+时间复杂度: O(n)
+空间复杂度: O(1)
+首先判断两个字符串长度是否相等，不相等则直接返回 false。
+若相等，则初始化 26 个字母哈希表，遍历字符串 s 和 t
+s 负责在对应位置增加，t 负责在对应位置减少
+如果哈希表的值都为 0，则二者是字母异位词
+```c++
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        if (s.size() != t.size())
+            return false;
+        int alpha[26] = {0};
+        for (int i = 0; i< s.size(); i++) {
+            alpha[s[i] - 'a']++;
+            alpha[t[i] - 'a']--;
+        }
+        for (int i=0;i<26;i++)
+            if (alpha[i] != 0)
+                return false;
+        return true;
+    }
+};
+```
+
