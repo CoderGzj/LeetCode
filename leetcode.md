@@ -611,15 +611,15 @@ s 负责在对应位置增加，t 负责在对应位置减少
 class Solution {
 public:
     bool isAnagram(string s, string t) {
-        if (s.size() != t.size())
+        if (s.size() != t.size()) //两字符串长度不等直接返回false
             return false;
         int alpha[26] = {0};
         for (int i = 0; i< s.size(); i++) {
-            alpha[s[i] - 'a']++;
-            alpha[t[i] - 'a']--;
+            alpha[s[i] - 'a']++; //s增加记录
+            alpha[t[i] - 'a']--; //t减少记录
         }
         for (int i=0;i<26;i++)
-            if (alpha[i] != 0)
+            if (alpha[i] != 0) //如果元素均为空，则说明符合字母异位词。
                 return false;
         return true;
     }
